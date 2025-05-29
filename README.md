@@ -332,6 +332,65 @@ Rekomendasi ini menunjukkan bahwa model berhasil menangkap preferensi pengguna t
 
 Model Collaborative Filtering berbasis neural ini menunjukkan performa yang baik pada data validasi awal dan menghasilkan rekomendasi yang relevan secara personal. Dengan tuning dan data tambahan, model ini memiliki potensi besar untuk dikembangkan lebih lanjut.
 
+## Evaluation
+
+Tahap **evaluasi** bertujuan untuk mengukur sejauh mana model rekomendasi yang dikembangkan mampu memberikan prediksi yang akurat dan relevan terhadap preferensi pengguna. Pada proyek ini, metrik evaluasi yang digunakan adalah **Root Mean Squared Error (RMSE)**, yang umum digunakan dalam sistem rekomendasi berbasis prediksi rating.
+
+### Metrik Evaluasi: Root Mean Squared Error (RMSE)
+
+RMSE mengukur seberapa jauh prediksi model dari nilai aktualnya. Semakin kecil nilai RMSE, semakin akurat model dalam memprediksi rating.
+
+### Hasil Evaluasi
+
+Model dievaluasi menggunakan data validasi selama proses pelatihan sebanyak 8 epoch. Berikut adalah grafik performa model berdasarkan nilai RMSE pada data training dan validation:
+
+![hasil evaluasi](visualisasi/Gambar4.png)
+
+**Insight dari Grafik:**
+- Model menunjukkan performa **terbaik pada epoch ke-1** dengan **RMSE validasi sebesar 0.3677**.
+- Mulai epoch ke-5, terlihat adanya **overfitting**, ditandai dengan meningkatnya RMSE pada data validasi meskipun RMSE training terus menurun.
+- **Epoch ke-4** merupakan titik **kompromi terbaik** antara generalisasi dan kompleksitas model, karena pada titik ini performa masih relatif stabil di kedua data.
+
+
+## Kesimpulan Evaluasi (Berbasis Metrik)
+
+- Model terbaik dipilih berdasarkan **metrik RMSE** dan tren performa model selama proses training dan validasi.
+- Model **Neural Collaborative Filtering (NCF)** menghasilkan performa validasi terbaik pada epoch pertama dengan **RMSE = 0.3677**, sebelum mengalami overfitting pada epoch-epoch berikutnya.
+- Hasil evaluasi menunjukkan bahwa untuk data interaksi pengguna-buku dengan skala besar dan kompleksitas tinggi, pendekatan **deep learning berbasis collaborative filtering** mampu mempelajari pola tersembunyi preferensi pengguna secara efektif.
+
+---
+
+### 1. Kesesuaian dengan Problem Statements
+- ✅ **Prediksi preferensi buku pengguna** berhasil dilakukan dengan baik menggunakan pendekatan collaborative filtering. Sistem mampu menyarankan buku-buku yang belum pernah dibaca, namun cenderung disukai oleh pengguna berdasarkan interaksi serupa dari pengguna lain.
+- ✅ Model memberikan rekomendasi **yang sangat relevan**, seperti dominasi seri *Harry Potter*, yang menunjukkan kemampuan model menangkap pola ketertarikan pengguna terhadap genre tertentu (fantasi/populer).
+- ✅ Visualisasi dan analisis distribusi data mendukung pemahaman konteks pengguna dan buku, sehingga pengolahan data mampu menjawab tantangan utama dalam membangun sistem rekomendasi berbasis histori rating.
+
+---
+
+### 2. Pencapaian Goals
+- 🎯 Proyek berhasil **mengolah data rating, pengguna, dan buku** secara menyeluruh dan membentuk dataset representatif melalui proses sampling, encoding, dan normalisasi.
+- 🎯 Model rekomendasi mampu memberikan **top-N recommendation** yang akurat dan personal, menjawab kebutuhan sistem untuk meningkatkan pengalaman membaca dan eksplorasi buku pengguna.
+- 🎯 Hasil visualisasi mendalam pada tahap data understanding mengungkap informasi kunci tentang tren pengguna aktif, distribusi usia, dan buku paling populer yang memperkuat strategi rekomendasi.
+
+---
+
+### 3. Dampak dari Solution Statements
+- 💡 Pendekatan **Neural Collaborative Filtering** memberikan fleksibilitas dan kekuatan dalam menangkap **relasi non-linear** antar pengguna dan item.
+- 💡 Evaluasi berbasis metrik RMSE memungkinkan penilaian performa yang objektif dan akurat, serta membantu identifikasi titik optimal pelatihan model.
+- 💡 Sistem rekomendasi ini memiliki **potensi langsung untuk diintegrasikan ke platform literasi digital**, toko buku online, atau aplikasi edukatif yang membutuhkan personalisasi dalam penyajian konten buku.
+
+---
+
+## 📌 Kesimpulan Umum
+
+Proyek sistem rekomendasi buku ini membuktikan bahwa pendekatan berbasis **machine learning dan deep learning** sangat efektif untuk memahami dan memprediksi preferensi pengguna dalam dunia literasi digital. Dengan memanfaatkan **data historis interaksi pengguna**, model dapat merekomendasikan buku-buku yang personal dan relevan, sehingga:
+
+- Meningkatkan pengalaman eksplorasi dan membaca buku,
+- Membantu pengguna menemukan konten yang sesuai dengan minat mereka,
+- Mendukung pertumbuhan ekosistem digital literasi melalui personalisasi konten.
+
+Dengan demikian, sistem rekomendasi ini tidak hanya sukses dari sisi teknis, tetapi juga memberikan **nilai strategis dan praktis** bagi pengembangan teknologi pendidikan dan industri buku berbasis data.
+
 
 
 
