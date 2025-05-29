@@ -18,18 +18,24 @@ Secara umum, sistem rekomendasi adalah algoritma yang bertujuan menyarankan item
 Dalam konteks literasi dan industri buku, sistem rekomendasi memiliki potensi besar untuk membantu pembaca menemukan buku baru yang sesuai dengan preferensi mereka, sekaligus membantu penerbit dan toko buku daring untuk meningkatkan keterlibatan dan penjualan.
 
 **Pertanyaan Utama:** <br>
-Dengan data rating buku yang tersedia, bagaimana membangun sistem rekomendasi buku yang mampu menyarankan buku lain yang belum pernah dibaca oleh pengguna, namun kemungkinan besar akan disukai — menggunakan pendekatan collaborative filtering?
+- Bagaimana mengidentifikasi pola preferensi pengguna terhadap buku berdasarkan data rating yang tersedia?
+
+- Bagaimana menyarankan buku yang belum pernah dibaca oleh pengguna, namun memiliki kemungkinan besar untuk disukai, berdasarkan kesamaan preferensi antar pengguna?
+
+- Bagaimana menyajikan hasil eksplorasi data dalam bentuk visualisasi untuk mendukung proses analisis dan pemodelan sistem rekomendasi?
 
 **Tujuan:**<br>
-- Menghasilkan sejumlah rekomendasi buku yang belum pernah dibaca pengguna, namun sesuai dengan preferensi pengguna lain yang memiliki selera serupa, menggunakan teknik collaborative filtering.
+- Mengolah data rating pengguna untuk memahami distribusi preferensi dan interaksi antar pengguna dan buku.
 
-- Menyajikan hasil dan pola dalam data melalui eksplorasi data visual seperti bar plot.
+- Membangun sistem rekomendasi berbasis collaborative filtering yang mampu menyarankan buku sesuai dengan selera pengguna yang memiliki pola interaksi serupa.
+
+- Menyajikan hasil eksplorasi data dalam bentuk visualisasi (seperti bar plot) untuk memberikan wawasan mengenai distribusi rating, usia pengguna, dan buku paling populer.
 
 **Sumber Dataset:** https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset
 
 ***Deskripsi:***
 
-Dataset Book-Crossing merupakan kumpulan data yang terdiri dari tiga file utama: Users, Books, dan Ratings. File Users menyimpan informasi mengenai pengguna, di mana setiap pengguna diidentifikasi dengan ID unik yang telah dianonimkan menjadi angka. Selain itu, terdapat data demografis seperti lokasi dan usia, meskipun beberapa nilai mungkin kosong atau tidak tersedia. File Books berisi informasi tentang buku yang diidentifikasi dengan ISBN. Selain judul buku, nama penulis (hanya yang pertama jika lebih dari satu), tahun terbit, dan penerbit, file ini juga mencantumkan tautan gambar sampul dalam tiga ukuran berbeda (kecil, sedang, besar) yang diambil dari situs Amazon. Terakhir, file Ratings menyajikan data penilaian buku oleh pengguna. Penilaian ini bisa berupa eksplisit (rentang 1–10, semakin tinggi menunjukkan apresiasi yang lebih besar) atau implisit (ditandai dengan nilai 0, menunjukkan interaksi tanpa penilaian langsung). Dataset ini banyak digunakan untuk membangun dan menguji sistem rekomendasi berbasis buku.
+Dataset Book Recommendation Dataset merupakan kumpulan data yang terdiri dari tiga file utama: Users, Ratings, dan Books. File Users menyimpan informasi mengenai pengguna, di mana setiap pengguna diidentifikasi dengan ID unik yang telah dianonimkan menjadi angka. Selain itu, terdapat data demografis seperti lokasi dan usia, meskipun beberapa nilai mungkin kosong atau tidak tersedia. File Ratings menyajikan data penilaian buku oleh pengguna. Penilaian ini bisa berupa eksplisit (rentang 1–10, semakin tinggi menunjukkan apresiasi yang lebih besar) atau implisit (ditandai dengan nilai 0, menunjukkan interaksi tanpa penilaian langsung). Terakhir, file Books berisi informasi tentang buku yang diidentifikasi dengan ISBN. Selain judul buku, nama penulis (hanya yang pertama jika lebih dari satu), tahun terbit, dan penerbit, file ini juga mencantumkan tautan gambar sampul dalam tiga ukuran berbeda (kecil, sedang, besar) yang diambil dari situs Amazon. Dataset ini banyak digunakan untuk membangun dan menguji sistem rekomendasi berbasis buku.
 
 # **Import Library**
 
@@ -282,7 +288,7 @@ Visualisasi menunjukkan bahwa mayoritas pengguna berasal dari negara-negara berb
 
 Selain itu, terlihat kontribusi signifikan dari kota-kota di Eropa seperti Madrid (Spanyol), Berlin (Jerman), dan Milano (Italia) serta beberapa kota di Kanada dan Australia.
 
-Pola ini mengindikasikan bahwa data pengguna dalam dataset Book-Crossing didominasi oleh kawasan Amerika Utara, Eropa Barat, dan Australia, yang mungkin mencerminkan preferensi dan budaya literasi dari wilayah tersebut. Hal ini penting diperhatikan saat membangun sistem rekomendasi agar dapat mempertimbangkan keberagaman lokasi dan konteks budaya pengguna.
+Pola ini mengindikasikan bahwa data pengguna dalam dataset Book Recommendation didominasi oleh kawasan Amerika Utara, Eropa Barat, dan Australia, yang mungkin mencerminkan preferensi dan budaya literasi dari wilayah tersebut. Hal ini penting diperhatikan saat membangun sistem rekomendasi agar dapat mempertimbangkan keberagaman lokasi dan konteks budaya pengguna.
 
 **Mengelompokkan data rating berdasarkan user_id dan menggambil 20 pengguna dengan jumlah rating terbanyak**
 """
@@ -318,7 +324,7 @@ data_merged.head(2)
 
 """***Insight:***
 
-Data rating dan buku berhasil digabungkan berdasarkan ISBN, menghasilkan lebih dari 1 juta baris data. Setiap interaksi pengguna kini dilengkapi informasi judul, penulis, tahun terbit, dan penerbit buku. Gabungan ini menjadi dasar penting untuk membangun sistem rekomendasi yang lebih akurat dan kontekstual.
+Data rating dan buku berhasil digabungkan berdasarkan ISBN, menghasilkan lebih dari 1 juta baris data. Setiap interaksi pengguna kini dilengkapi informasi user_id, ISBN, rating, judul, penulis, tahun terbit, dan penerbit buku. Gabungan ini menjadi dasar penting untuk membangun sistem rekomendasi yang lebih akurat dan kontekstual.
 
 **Mengelompokkan data berdasarkan judul buku dan mengurutkan dari jumlah rating terbanyak**
 """
