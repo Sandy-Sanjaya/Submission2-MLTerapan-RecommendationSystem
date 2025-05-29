@@ -129,6 +129,10 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
 
 ---
 
+### Visualisasi Data (EDA)
+Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah beberapa visualisasi yang dilakukan:
+#### 1. Top Contributors in Book Dataset
+
 **Insight**:
 - Tahun terbit terbanyak: 2002, disusul 2001 dan 2000.
 - Penerbit terbanyak:
@@ -142,6 +146,20 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
   3. Ann M. Martin
   4. Stephen King
 
+---
+#### 2. Distribution of Book Ratings
+
+**Insight**:
+- Rating 0 mendominasi (>700.000 entri) → menunjukkan **rating implisit**.
+- Rating eksplisit (1–10) didominasi nilai tinggi:
+  - Tertinggi pada rating 8, 10, dan 7.
+  - Rating rendah (1–4) sangat sedikit.
+- Pengguna cenderung hanya memberi rating pada buku yang mereka sukai.
+- Ditemukan **20 pengguna paling aktif** dengan jumlah rating terbanyak, yang signifikan dalam membentuk sistem rekomendasi.
+- Rata-rata rating per pengguna memberikan gambaran preferensi individual.
+
+---
+#### 3. 20 top location of the users
 **Insight**:
 - Mayoritas pengguna berasal dari negara-negara berbahasa Inggris.
 - Lokasi pengguna terbanyak:
@@ -153,15 +171,6 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
 - Ini menunjukkan dominasi pengguna dari Amerika Utara, Eropa Barat, dan Australia — penting untuk mempertimbangkan keragaman budaya dalam sistem rekomendasi.
 
 ---
-
-**Insight**:
-- Rating 0 mendominasi (>700.000 entri) → menunjukkan **rating implisit**.
-- Rating eksplisit (1–10) didominasi nilai tinggi:
-  - Tertinggi pada rating 8, 10, dan 7.
-  - Rating rendah (1–4) sangat sedikit.
-- Pengguna cenderung hanya memberi rating pada buku yang mereka sukai.
-- Ditemukan **20 pengguna paling aktif** dengan jumlah rating terbanyak, yang signifikan dalam membentuk sistem rekomendasi.
-- Rata-rata rating per pengguna memberikan gambaran preferensi individual.
 
 
 ### Data Merging & Popular Books
