@@ -132,6 +132,7 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
 ### Visualisasi Data (EDA)
 Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah beberapa visualisasi yang dilakukan:
 #### 1. Top Contributors in Book Dataset
+![Top Contributors in Book Dataset](visualisasi/Gambar1.png)
 
 **Insight**:
 - Tahun terbit terbanyak: 2002, disusul 2001 dan 2000.
@@ -148,7 +149,7 @@ Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah bebera
 
 ---
 #### 2. Distribution of Book Ratings
-
+![Distribution of Book Ratings](visualisasi/Gambar2.png)
 **Insight**:
 - Rating 0 mendominasi (>700.000 entri) → menunjukkan **rating implisit**.
 - Rating eksplisit (1–10) didominasi nilai tinggi:
@@ -160,6 +161,7 @@ Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah bebera
 
 ---
 #### 3. 20 top location of the users
+![20 Top Location of the Users](visualisasi/Gambar3.png)
 **Insight**:
 - Mayoritas pengguna berasal dari negara-negara berbahasa Inggris.
 - Lokasi pengguna terbanyak:
@@ -172,23 +174,79 @@ Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah bebera
 
 ---
 
+### Mengelompokkan Data Rating Berdasarkan `user_id` dan Mengambil 20 Pengguna dengan Jumlah Rating Terbanyak
+
+Dari analisis data rating, ditemukan 20 pengguna paling aktif dengan jumlah rating terbanyak. Informasi ini penting karena pengguna aktif berkontribusi besar dalam membentuk pola rekomendasi sistem. Rata-rata rating yang mereka berikan juga membantu memahami kecenderungan penilaian masing-masing pengguna, yang berguna untuk meningkatkan akurasi rekomendasi.
+
+Berikut adalah 20 pengguna teratas berdasarkan jumlah rating terbanyak:
+
+| No. | user_id | count  | mean     |
+|-----|---------|--------|----------|
+| 1   | 4213    | 13602  | 4.564197 |
+| 2   | 74815   | 7550   | 0.165921 |
+| 3   | 58113   | 6109   | 2.786872 |
+| 4   | 37356   | 5891   | 8.728230 |
+| 5   | 13576   | 5850   | 1.078597 |
+| 6   | 80185   | 4785   | 0.003135 |
+| 7   | 105111  | 4353   | 0.159276 |
+| 8   | 28884   | 3367   | 0.145233 |
+| 9   | 42037   | 3100   | 0.787742 |
+| 10  | 88584   | 3067   | 2.671992 |
+| 11  | 86808   | 2991   | 0.911735 |
+| 12  | 6111    | 2948   | 2.334803 |
+| 13  | 88400   | 2740   | 0.132760 |
+| 14  | 13950   | 2529   | 0.480427 |
+| 15  | 19872   | 2512   | 0.477309 |
+| 16  | 92807   | 2507   | 0.140806 |
+| 17  | 77063   | 2504   | 1.780751 |
+| 18  | 21044   | 2459   | 0.372102 |
+| 19  | 69817   | 2448   | 1.524918 |
+| 20  | 64531   | 2421   | 3.147047 |
+
+---
 
 ### Data Merging & Popular Books
 
 - Dataset **Ratings** digabungkan dengan **Books** berdasarkan `ISBN`, menghasilkan lebih dari **1 juta baris data**.
 - Setiap interaksi kini dilengkapi:
+  - UserId
+  - ISBN
+  - Rating
   - Judul buku
   - Penulis
   - Tahun terbit
   - Penerbit
 
-**Insight**:
-- Ditemukan **20 buku paling populer** (paling banyak dinilai pengguna).
-- Buku-buku ini:
-  - Memiliki **tingkat popularitas tinggi**.
-  - Dapat digunakan sebagai prioritas dalam sistem rekomendasi.
-  - Rata-rata rating buku mencerminkan **kualitas penerimaan** dari pembaca.
+ ---
+### Mengelompokkan Data Berdasarkan Judul Buku dan Mengurutkan dari Jumlah Rating Terbanyak
 
----
+Dari hasil pengelompokan data berdasarkan judul buku, ditemukan 20 buku yang paling banyak mendapatkan rating dari pengguna. Buku-buku ini memiliki tingkat popularitas tinggi karena sering dinilai oleh banyak pengguna. Selain itu, informasi rata-rata rating pada masing-masing buku juga membantu mengukur seberapa baik buku tersebut diterima. Data ini sangat berguna untuk mengidentifikasi buku-buku populer dan berkualitas, yang dapat dijadikan prioritas dalam sistem rekomendasi.
+
+Berikut adalah 20 judul buku teratas berdasarkan jumlah rating terbanyak:
+
+| No. | Title                                             | Count | Mean     |
+|-----|---------------------------------------------------|-------|----------|
+| 1   | Wild Animus                                       | 2502  | 1.019584 |
+| 2   | The Lovely Bones: A Novel                         | 1295  | 4.468726 |
+| 3   | The Da Vinci Code                                 | 898   | 4.642539 |
+| 4   | A Painted House                                   | 838   | 3.231504 |
+| 5   | The Nanny Diaries: A Novel                        | 828   | 3.530193 |
+| 6   | Bridget Jones's Diary                             | 815   | 3.527607 |
+| 7   | The Secret Life of Bees                           | 774   | 4.470528 |
+| 8   | Divine Secrets of the Ya-Ya Sisterhood: A Novel   | 740   | 3.437388 |
+| 9   | The Red Tent (Bestselling Backlist)               | 723   | 3.434716 |
+| 10  | Angels & Demons                                   | 670   | 3.708955 |
+| 11  | Life of Pi                                        | 664   | 4.088559 |
+| 12  | Snow Falling on Cedars                            | 662   | 3.252266 |
+| 13  | The Summons                                       | 655   | 3.432061 |
+| 14  | The Notebook                                      | 650   | 3.560000 |
+| 15  | The Testament                                      | 617   | 3.179903 |
+| 16  | House of Sand and Fog                             | 588   | 3.030612 |
+| 17  | Where the Heart Is (Oprah's Book Club)            | 583   | 4.105983 |
+| 18  | The Pelican Brief                                 | 581   | 2.611015 |
+| 19  | Harry Potter and the Sorcerer's Stone             | 575   | 4.896562 |
+| 20  | Summer Sisters                                     | 573   | 3.612457 |
+
+
 
 
