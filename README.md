@@ -115,7 +115,10 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
 | `Image-URL-S/M/L`  | URL gambar cover buku (kecil, sedang, besar) — dihapus karena tidak digunakan. |
 
 ---
-### Data Quality & Preprocessing
+
+### Eksploratory Data Analysis (EDA)
+
+#### Data Quality & Preprocessing
 
 - **Users**:
   - Missing values ditemukan pada `Age`.
@@ -127,9 +130,6 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
   - Tidak ada missing values.
 - **Duplikasi**: Tidak ditemukan pada ketiga dataset.
 
----
-
-### Visualisasi Data (EDA)
 Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah beberapa visualisasi yang dilakukan:
 #### 1. Top Contributors in Book Dataset
 ![Top Contributors in Book Dataset](visualisasi/Gambar1.png)
@@ -144,8 +144,8 @@ Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah bebera
 - Penulis terbanyak:
   1. Agatha Christie
   2. William Shakespeare
-  3. Ann M. Martin
-  4. Stephen King
+  3. Stephen King
+  4. Ann M. Martin
 
 ---
 #### 2. Distribution of Book Ratings
@@ -156,8 +156,6 @@ Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah bebera
   - Tertinggi pada rating 8, 10, dan 7.
   - Rating rendah (1–4) sangat sedikit.
 - Pengguna cenderung hanya memberi rating pada buku yang mereka sukai.
-- Ditemukan **20 pengguna paling aktif** dengan jumlah rating terbanyak, yang signifikan dalam membentuk sistem rekomendasi.
-- Rata-rata rating per pengguna memberikan gambaran preferensi individual.
 
 ---
 #### 3. 20 top location of the users
@@ -205,7 +203,7 @@ Berikut adalah 20 pengguna teratas berdasarkan jumlah rating terbanyak:
 
 ---
 
-### Data Merging & Popular Books
+### Data Merging 
 
 - Dataset **Ratings** digabungkan dengan **Books** berdasarkan `ISBN`, menghasilkan lebih dari **1 juta baris data**.
 - Setiap interaksi kini dilengkapi:
@@ -254,13 +252,13 @@ Tahap **data preparation** merupakan proses penting sebelum membangun model mach
 ### 1. Pembersihan Data
 
 #### a. Mengecek dan Menangani Duplikat  
-Pertama, dilakukan pemeriksaan terhadap ketiga dataset (`Books`, `Ratings`, dan `Users`) untuk mengetahui keberadaan data duplikat. Berdasarkan hasil analisis, **tidak ditemukan duplikasi**, sehingga tidak diperlukan penghapusan data pada tahap ini.
+Pertama, dilakukan pemeriksaan terhadap dataset gabungan untuk mengetahui keberadaan data duplikat. Berdasarkan hasil analisis, **tidak ditemukan duplikasi**, sehingga tidak diperlukan penghapusan data pada tahap ini.
 
 #### b. Mengecek dan Menangani Missing Values  
-Beberapa nilai kosong ditemukan dalam kolom `Author` dan `Publisher` pada dataset `Books`, masing-masing sebanyak **2 entri**. Untuk menjaga kualitas dan integritas data, baris-baris tersebut dihapus dari dataset.
+Beberapa nilai kosong ditemukan dalam kolom `Author` dan `Publisher` pada dataset gabungan, masing-masing sebanyak **2 entri**. Untuk menjaga kualitas dan integritas data, baris-baris tersebut dihapus dari dataset.
 
 #### c. Sampling Dataset  
-Dataset asli memiliki lebih dari satu juta entri yang berpotensi memperlambat proses training. Oleh karena itu, dilakukan sampling sebanyak **500.000 data interaksi** dari gabungan dataset untuk menciptakan *dataframe* `data_small`. Sampling ini bertujuan untuk mempercepat eksplorasi dan pelatihan model tanpa kehilangan representativitas data.
+Dataset gabungan memiliki lebih dari satu juta entri yang berpotensi memperlambat proses training. Oleh karena itu, dilakukan sampling sebanyak **500.000 data interaksi** dari gabungan dataset untuk menciptakan *dataframe* `data_small`. Sampling ini bertujuan untuk mempercepat eksplorasi dan pelatihan model tanpa kehilangan representativitas data.
 
 ---
 
@@ -288,14 +286,24 @@ Pembagian ini dilakukan secara acak untuk memastikan distribusi yang merata. Dat
 
 Pada tahap ini, fokus utama adalah mengembangkan sistem rekomendasi buku dengan menggunakan pendekatan **Collaborative Filtering**, khususnya dengan algoritma **Neural Collaborative Filtering (NCF)**. Pendekatan ini menganalisis pola interaksi antara pengguna dan buku — terutama dari data rating — untuk memahami preferensi pengguna yang memiliki kesamaan. Dengan mengenali pola tersebut, sistem dapat merekomendasikan buku-buku yang belum pernah dibaca oleh pengguna, namun disukai oleh pengguna lain dengan selera serupa.
 
-### Model 1: Neural Collaborative Filtering (NCF)
+### Model Neural Collaborative Filtering (NCF)
 
-Model dibangun menggunakan TensorFlow dan terdiri atas beberapa komponen inti:
+Model dibangun menggunakan TensorFlow dengan pendekatan **Neural Collaborative Filtering (NCF)** dan arsitektur khusus sebagai berikut:
 
-- **Embedding layer** untuk memetakan `user_id` dan `book_id` ke dalam representasi vektor berdimensi rendah.
-- **Concatenation layer** untuk menggabungkan representasi user dan item.
-- **Hidden layers (Dense layers)** dengan fungsi aktivasi ReLU untuk menangkap relasi non-linear.
-- **Output layer** dengan satu neuron dan aktivasi sigmoid untuk menghasilkan prediksi skor rating dalam skala 0–1, yang kemudian disesuaikan kembali ke skala rating asli.
+- **User dan Book Embedding**  
+  Layer `Embedding` digunakan untuk memetakan `user_id` dan `book_id` ke dalam vektor berdimensi rendah (50 dimensi), yang dapat menangkap fitur laten dari masing-masing entitas.
+
+- **User Bias dan Book Bias**  
+  Layer embedding tambahan digunakan untuk mempelajari bias dari pengguna dan buku secara terpisah. Bias ini penting untuk memperhitungkan kecenderungan pengguna tertentu atau popularitas buku tertentu secara umum.
+
+- **Dot Product Layer**  
+  Representasi vektor pengguna dan buku digabungkan menggunakan **dot product** yang mencerminkan tingkat kecocokan di antara keduanya.
+
+- **Output Layer**  
+  Hasil perhitungan dot product dan bias dijumlahkan, lalu diproses dengan **fungsi aktivasi sigmoid**, menghasilkan nilai antara 0 dan 1 yang merepresentasikan kemungkinan pengguna menyukai suatu buku.
+
+- **Loss Function dan Optimizer**  
+  Model menggunakan **Binary Crossentropy** karena pendekatannya serupa dengan klasifikasi biner terhadap kesukaan pengguna, serta dioptimalkan dengan **Adam Optimizer**. Metrik utama yang digunakan adalah **Root Mean Squared Error (RMSE)** untuk menilai akurasi prediksi.
 
 Model dilatih selama **8 epoch**, dengan metrik evaluasi utama yaitu **Root Mean Squared Error (RMSE)** pada data training dan validation.
 
@@ -304,7 +312,7 @@ Model dilatih selama **8 epoch**, dengan metrik evaluasi utama yaitu **Root Mean
 - Setelah itu, terjadi penurunan performa secara bertahap, dan **overfitting mulai terlihat pada epoch ke-6 dan ke-7**, di mana nilai RMSE meningkat signifikan.
 - Pada **epoch ke-8**, performa validasi sedikit membaik, namun tidak melebihi performa awal.
 
-### Output: Top-N Book Recommendation
+### Output: Top 10 Book Recommendation
 
 Model berhasil memberikan **top-10 rekomendasi buku** untuk pengguna tertentu. Berikut adalah contoh hasil rekomendasi:
 
@@ -354,7 +362,7 @@ Model dievaluasi menggunakan data validasi selama proses pelatihan sebanyak 8 ep
 
 ## Kesimpulan Evaluasi (Berbasis Metrik)
 
-- Model terbaik dipilih berdasarkan **metrik RMSE** dan tren performa model selama proses training dan validasi.
+- Model menggunakan **metrik RMSE** dan tren performa model selama proses training dan validasi.
 - Model **Neural Collaborative Filtering (NCF)** menghasilkan performa validasi terbaik pada epoch pertama dengan **RMSE = 0.3677**, sebelum mengalami overfitting pada epoch-epoch berikutnya.
 - Hasil evaluasi menunjukkan bahwa untuk data interaksi pengguna-buku dengan skala besar dan kompleksitas tinggi, pendekatan **deep learning berbasis collaborative filtering** mampu mempelajari pola tersembunyi preferensi pengguna secara efektif.
 
