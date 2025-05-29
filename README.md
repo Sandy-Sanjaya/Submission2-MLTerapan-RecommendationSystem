@@ -247,6 +247,94 @@ Berikut adalah 20 judul buku teratas berdasarkan jumlah rating terbanyak:
 | 19  | Harry Potter and the Sorcerer's Stone             | 575   | 4.896562 |
 | 20  | Summer Sisters                                     | 573   | 3.612457 |
 
+## Data Preparation
+
+Tahap **data preparation** merupakan proses penting sebelum membangun model machine learning, terutama dalam sistem rekomendasi berbasis data pengguna. Tujuan utama dari tahap ini adalah memastikan bahwa data berada dalam format yang sesuai dan bersih, serta siap digunakan oleh model **Neural Collaborative Filtering (NCF)**. Dalam proyek ini, proses data preparation dilakukan dalam dua tahapan besar: **pembersihan data** dan **preprocessing untuk collaborative filtering**.
+
+### 1. Pembersihan Data
+
+#### a. Mengecek dan Menangani Duplikat  
+Pertama, dilakukan pemeriksaan terhadap ketiga dataset (`Books`, `Ratings`, dan `Users`) untuk mengetahui keberadaan data duplikat. Berdasarkan hasil analisis, **tidak ditemukan duplikasi**, sehingga tidak diperlukan penghapusan data pada tahap ini.
+
+#### b. Mengecek dan Menangani Missing Values  
+Beberapa nilai kosong ditemukan dalam kolom `Author` dan `Publisher` pada dataset `Books`, masing-masing sebanyak **2 entri**. Untuk menjaga kualitas dan integritas data, baris-baris tersebut dihapus dari dataset.
+
+#### c. Sampling Dataset  
+Dataset asli memiliki lebih dari satu juta entri yang berpotensi memperlambat proses training. Oleh karena itu, dilakukan sampling sebanyak **500.000 data interaksi** dari gabungan dataset untuk menciptakan *dataframe* `data_small`. Sampling ini bertujuan untuk mempercepat eksplorasi dan pelatihan model tanpa kehilangan representativitas data.
+
+---
+
+### 2. Preprocessing untuk Collaborative Filtering
+
+#### a. Menyalin Data  
+Untuk menjaga keutuhan data asli, data hasil sampling disalin menjadi variabel baru yang digunakan khusus untuk proses training dan evaluasi model.
+
+#### b. Encoding  
+Model collaborative filtering, khususnya berbasis neural network, membutuhkan input dalam bentuk numerik. Oleh karena itu, kolom `User_id` dan `ISBN` di-*encode* menjadi integer menggunakan `LabelEncoder`.  
+Hasil encoding menunjukkan terdapat:
+- **61.584 pengguna unik**
+- **177.748 buku unik**
+
+Hal ini menunjukkan cakupan dan keragaman interaksi yang cukup tinggi dalam dataset.
+
+#### c. Pembagian Data  
+Setelah proses encoding, dataset dibagi menjadi dua bagian:
+- **80% data training**
+- **20% data testing**
+
+Pembagian ini dilakukan secara acak untuk memastikan distribusi yang merata. Data training digunakan untuk melatih model mengenali pola interaksi pengguna dan buku, sementara data testing digunakan untuk mengevaluasi kemampuan model dalam memberikan prediksi yang akurat pada data yang belum pernah dilihat sebelumnya.
+
+## Modeling
+
+Pada tahap ini, fokus utama adalah mengembangkan sistem rekomendasi buku dengan menggunakan pendekatan **Collaborative Filtering**, khususnya dengan algoritma **Neural Collaborative Filtering (NCF)**. Pendekatan ini menganalisis pola interaksi antara pengguna dan buku — terutama dari data rating — untuk memahami preferensi pengguna yang memiliki kesamaan. Dengan mengenali pola tersebut, sistem dapat merekomendasikan buku-buku yang belum pernah dibaca oleh pengguna, namun disukai oleh pengguna lain dengan selera serupa.
+
+### Model 1: Neural Collaborative Filtering (NCF)
+
+Model dibangun menggunakan TensorFlow dan terdiri atas beberapa komponen inti:
+
+- **Embedding layer** untuk memetakan `user_id` dan `book_id` ke dalam representasi vektor berdimensi rendah.
+- **Concatenation layer** untuk menggabungkan representasi user dan item.
+- **Hidden layers (Dense layers)** dengan fungsi aktivasi ReLU untuk menangkap relasi non-linear.
+- **Output layer** dengan satu neuron dan aktivasi sigmoid untuk menghasilkan prediksi skor rating dalam skala 0–1, yang kemudian disesuaikan kembali ke skala rating asli.
+
+Model dilatih selama **8 epoch**, dengan metrik evaluasi utama yaitu **Root Mean Squared Error (RMSE)** pada data training dan validation.
+
+#### Insight Model:
+- Performa **terbaik** dicapai pada **epoch ke-1**, dengan **RMSE validasi sebesar 0.3677**.
+- Setelah itu, terjadi penurunan performa secara bertahap, dan **overfitting mulai terlihat pada epoch ke-6 dan ke-7**, di mana nilai RMSE meningkat signifikan.
+- Pada **epoch ke-8**, performa validasi sedikit membaik, namun tidak melebihi performa awal.
+
+### Output: Top-N Book Recommendation
+
+Model berhasil memberikan **top-10 rekomendasi buku** untuk pengguna tertentu. Berikut adalah contoh hasil rekomendasi:
+
+1. **Harry Potter and the Sorcerer's Stone**
+2. **Harry Potter and the Chamber of Secrets**
+3. **Harry Potter and the Prisoner of Azkaban**
+4. **Harry Potter and the Goblet of Fire**
+5. **Harry Potter and the Order of the Phoenix**
+6. **The Great Gatsby**
+7. **The Secret Life of Bees**
+8. **Anne Frank: The Diary of a Young Girl**
+9. **Angels & Demons**
+10. **The Lovely Bones: A Novel**
+
+Rekomendasi ini menunjukkan bahwa model berhasil menangkap preferensi pengguna terhadap genre **fantasi populer**, **novel klasik**, dan **kisah bernuansa emosional** atau **historis**. Dominasi buku dari seri *Harry Potter* juga mengindikasikan bahwa sistem mengenali konsistensi minat pengguna terhadap suatu franchise atau penulis.
+
+### Kelebihan dan Kekurangan
+
+| Aspek              | Penjelasan |
+|--------------------|-----------|
+| **Kelebihan**      | - Mampu mengenali pola kompleks melalui representasi embedding.<br>- Dapat memberikan rekomendasi personal berdasarkan interaksi historis.<br>- Fleksibel untuk dikembangkan menjadi model yang lebih kompleks di masa depan. |
+| **Kekurangan**     | - Membutuhkan data yang cukup besar dan bervariasi.<br>- Rentan terhadap overfitting jika tidak diatur dengan baik (misalnya terlalu banyak epoch).<br>- Tidak dapat memberikan rekomendasi untuk pengguna atau buku baru yang belum ada interaksi (**cold start problem**). |
+
+---
+
+Model Collaborative Filtering berbasis neural ini menunjukkan performa yang baik pada data validasi awal dan menghasilkan rekomendasi yang relevan secara personal. Dengan tuning dan data tambahan, model ini memiliki potensi besar untuk dikembangkan lebih lanjut.
+
+
+
+
 
 
 
