@@ -66,11 +66,8 @@ Data Understanding merupakan tahap awal yang krusial dalam pengembangan proyek m
 - Melakukan load dataset dan mengubah nama kolom
 - Melakukan univariate exploratory data analysis
 - Melakukan visualisasi data
-- Mengelompokan data user yang melakukan rating terbanyak
-- Menggabungkan dataset
-- Mengelompokan data judul dengan jumlah rating terbanyak
 
-**Melakukan Load dataset dan mengubah nama kolom**
+## **Melakukan Load dataset dan mengubah nama kolom**
 """
 
 # Load dataset utama: Users, Books, dan Ratings
@@ -142,68 +139,19 @@ books.info()
 
 """***Insight:***
 
-Pada dataset `Users`, terdapat banyak nilai yang hilang (missing values) pada kolom `Age`, yang menunjukkan bahwa informasi usia tidak selalu tersedia untuk setiap pengguna. Sementara itu, dataset `Ratings` tidak mengandung missing values, sehingga data penilaian dapat digunakan secara utuh tanpa perlu penanganan khusus. Di sisi lain, pada dataset `Books` ditemukan 2 missing values pada kolom `Year` dan 3 missing values pada kolom `Image-URL-L`, yang mungkin perlu dibersihkan atau diisi ulang sebelum digunakan dalam pemodelan atau analisis lanjutan.
-
-**Menangani missing values pada kolom Age dengan nilai yang paling banyak muncul**
-"""
-
-# Mengisi missing values pada kolom 'Age' dengan nilai yang paling sering muncul (modus)
-most_frequent_age = user['Age'].mode()[0]  # Ambil nilai modus
-user['Age'].fillna(most_frequent_age, inplace=True)  # Isi nilai NaN dengan modus
-
-# Mengecek kembali apakah masih terdapat missing values atau tidak
-user.info()
-
-"""***Insight:***
-
-Untuk menangani missing values pada kolom Age di dataset Users, dilakukan pengisian menggunakan nilai yang paling sering muncul (modus). Pendekatan ini dipilih karena nilai modus dianggap mewakili mayoritas usia pengguna dalam data yang tersedia, serta dapat meminimalkan distorsi terhadap distribusi data asli. Dengan mengisi nilai kosong menggunakan modus, proses ini membantu menjaga konsistensi data tanpa menghapus baris yang mungkin masih mengandung informasi penting lainnya.
-
-**Menangani missing values pada dataset books**
-"""
-
-# Menghapus baris yang memiliki missing values di kolom 'Year'
-books.dropna(subset=['Year'], inplace=True)
-
-# Cek kembali apakah masih ada missing values di kolom 'Year'
-print("Jumlah nilai kosong pada kolom Year setelah dihapus:", books['Year'].isnull().sum())
-
-# Menghapus kolom dari image URL S, image URL M, dan image URL L
-books.drop(['Image-URL-S', 'Image-URL-M', 'Image-URL-L'], axis=1, inplace=True, errors='ignore')
-
-# Mengecek kembali pada kolom books
-books.info()
-
-"""***Insight:***
-
-Untuk menangani missing values pada dataset Books, dilakukan dua pendekatan yang berbeda. Pada kolom Year, karena jumlah missing values sangat sedikit, maka baris yang mengandung nilai kosong dihapus agar tidak memengaruhi integritas data secara keseluruhan. Sementara itu, kolom Image-URL-S, Image-URL-M, dan Image-URL-L dihapus dari dataset karena informasi gambar tidak digunakan dalam sistem rekomendasi ini. Penghapusan kolom tersebut juga membantu menyederhanakan struktur data dan mempercepat proses pemrosesan.
-
-**Mengecek apakah ada data duplikat dari masing-masing dataset**
-"""
-
-# Mengecek apakah ada baris duplikat pada dataset user
-user.duplicated().sum()
-
-# Mengecek apakah ada baris duplikat pada dataset rating
-rating.duplicated().sum()
-
-# Mengecek apakah ada baris duplikat pada dataset books
-books.duplicated().sum()
-
-"""***Insight:***
-
-Setelah dilakukan pengecekan terhadap ketiga dataset — Users, Books, dan Ratings — tidak ditemukan adanya baris duplikat. Hal ini menunjukkan bahwa setiap entri pada data bersifat unik dan tidak ada pengulangan informasi, sehingga tidak diperlukan proses penghapusan duplikat. Kondisi ini sangat mendukung kualitas data dan memperkuat keandalan analisis serta pemodelan sistem rekomendasi yang akan dibangun.
+Pada dataset `Users`, terdapat banyak nilai yang hilang (missing values) pada kolom `Age`, yang menunjukkan bahwa informasi usia tidak selalu tersedia untuk setiap pengguna. Sementara itu, dataset `Ratings` tidak mengandung missing values, sehingga data penilaian dapat digunakan secara utuh tanpa perlu penanganan khusus. Di sisi lain, pada dataset `Books` ditemukan 2 missing values pada kolom `Author` dan `Publisher`. Selain itu, 3 missing values pada kolom `Image-URL-L`, yang mungkin perlu dibersihkan atau diisi ulang sebelum digunakan dalam pemodelan atau analisis lanjutan.
 
 **Menampilkan jumlah baris dan kolom**
 """
 
-# Menampilkan jumlah baris dan kolom pada dataset rating, user, dan books
-print(f"Rating dataset total rows: {rating.shape[0]}, and total columns: {rating.shape[1]}")
+# Menampilkan jumlah baris dan kolom pada dataset user, rating, dan books
 print(f"User dataset total rows: {user.shape[0]}, and total columns: {user.shape[1]}")
+print(f"Rating dataset total rows: {rating.shape[0]}, and total columns: {rating.shape[1]}")
 print(f"Books dataset total rows: {books.shape[0]}, and total columns: {books.shape[1]}")
 
 """***Insight:***
 
-Dataset Ratings terdiri dari 1.149.780 baris dan 3 kolom, menunjukkan bahwa terdapat lebih dari satu juta interaksi pengguna dengan buku dalam bentuk penilaian. Dataset Users memiliki 278.858 baris dan 3 kolom, yang mencerminkan jumlah pengguna unik beserta informasi demografis yang tersedia. Sementara itu, dataset Books mencakup 271.360 baris dan 5 kolom, yang berisi informasi detail mengenai berbagai buku seperti judul, penulis, tahun terbit, penerbit, dan URL gambar. Jumlah data yang besar ini memberikan dasar yang kuat untuk membangun sistem rekomendasi yang akurat dan komprehensif.
+ Dataset Users memiliki 278.858 baris dan 3 kolom, yang mencerminkan jumlah pengguna unik beserta informasi demografis yang tersedia. Dataset Ratings terdiri dari 1.149.780 baris dan 3 kolom, menunjukkan bahwa terdapat lebih dari satu juta interaksi pengguna dengan buku dalam bentuk penilaian. Sementara itu, dataset Books mencakup 271.360 baris dan 5 kolom, yang berisi informasi detail mengenai berbagai buku seperti judul, penulis, tahun terbit, penerbit, dan URL gambar. Jumlah data yang besar ini memberikan dasar yang kuat untuk membangun sistem rekomendasi yang akurat dan komprehensif.
 
 **Melakukan Visualisasi sebelum masuk ke tahap data preparation**
 """
@@ -290,7 +238,123 @@ Selain itu, terlihat kontribusi signifikan dari kota-kota di Eropa seperti Madri
 
 Pola ini mengindikasikan bahwa data pengguna dalam dataset Book Recommendation didominasi oleh kawasan Amerika Utara, Eropa Barat, dan Australia, yang mungkin mencerminkan preferensi dan budaya literasi dari wilayah tersebut. Hal ini penting diperhatikan saat membangun sistem rekomendasi agar dapat mempertimbangkan keberagaman lokasi dan konteks budaya pengguna.
 
-**Mengelompokkan data rating berdasarkan user_id dan menggambil 20 pengguna dengan jumlah rating terbanyak**
+# **Data Preparation**
+
+Pada proyek ini, tahap data preparation dilakukan untuk memastikan bahwa data yang digunakan dalam model rekomendasi berada dalam kondisi yang optimal. Tujuan utama dari tahap ini adalah untuk membersihkan dan menyesuaikan struktur data mentah agar siap digunakan dalam algoritma collaborative filtering.
+
+1. **Pembersihan Data <br>**
+Proses pembersihan data dilakukan melalui beberapa tahapan berikut:
+
+- Mengecek dan Menangani Missing Values pada Dataset User dan Books <br>
+Data diperiksa untuk mendeteksi nilai yang hilang (missing values) dan dilakukan penanganan seperti penghapusan atau imputasi tergantung pada konteks kolom yang bersangkutan.
+
+- Meengecek Duplikasi pada Masing-Masing Dataset <br>
+Duplikat pada dataset User dan Books diidentifikasi dan dihapus agar tidak mempengaruhi distribusi data maupun hasil analisis.
+
+- Menggabungkan Dataset Rating dan Books <br>
+Dataset Rating digabung dengan Books menggunakan kolom ISBN untuk memperoleh informasi buku secara lengkap dalam satu tabel.
+
+- Seleksi Pengguna dan Buku Berdasarkan Aktivitas Rating <br>
+  - Mengelompokkan data berdasarkan user_id, lalu memilih 20 pengguna dengan jumlah rating terbanyak.
+  - Mengelompokkan data berdasarkan judul buku dan mengurutkannya berdasarkan jumlah rating terbanyak untuk mendapatkan buku-buku yang paling sering dirating.
+
+- Menangani Duplikasi dan Missing Values pada Dataset Gabungan <br>
+Setelah penggabungan, dilakukan pemeriksaan ulang untuk mendeteksi duplikasi dan nilai kosong pada dataset gabungan, serta dilakukan penanganan agar data tetap bersih dan valid.
+
+- Melakukan Sampling Dataset <br>
+Karena ukuran data yang besar, dilakukan teknik sampling untuk mengambil subset data yang representatif. Hal ini dilakukan guna mempercepat proses pelatihan model tanpa mengorbankan kualitas hasil.
+
+2. **Pra-pemrosesan Data untuk Collaborative Filtering**<br>
+Setelah tahap pembersihan awal selesai, proses dilanjutkan dengan pra-pemrosesan data khusus untuk model collaborative filtering, sebagai berikut:
+
+- Menyalin Dataset <br>
+Dataset dibagi dengan membuat salinan khusus untuk kebutuhan pemodelan agar data asli tetap utuh dan tidak terpengaruh oleh proses selanjutnya.
+
+- Encoding <br>
+Kolom user_id dan ISBN dikonversi ke dalam format numerik agar dapat diproses oleh algoritma collaborative filtering.
+
+- Pembagian Data <br>
+Dataset yang telah diproses kemudian dibagi menjadi dua bagian: 80% untuk training dan 20% untuk testing. Data training digunakan untuk membangun model, sedangkan data testing digunakan untuk mengukur performa model pada data yang belum pernah dilihat sebelumnya.
+
+## **Mengecek dan Menangani Missing Values pada Dataset User**
+"""
+
+# Menampilkan ringkasan informasi dari dataset user, termasuk jumlah entri, tipe data, dan jumlah nilai non-null
+user.info()
+
+# Mengisi missing values pada kolom 'Age' dengan nilai yang paling sering muncul (modus)
+most_frequent_age = user['Age'].mode()[0]  # Ambil nilai modus
+user['Age'].fillna(most_frequent_age, inplace=True)  # Isi nilai NaN dengan modus
+
+# Mengecek kembali apakah masih terdapat missing values atau tidak
+user.info()
+
+"""***Insight:***
+
+Untuk menangani missing values pada kolom Age di dataset Users, dilakukan pengisian menggunakan nilai yang paling sering muncul (modus). Pendekatan ini dipilih karena nilai modus dianggap mewakili mayoritas usia pengguna dalam data yang tersedia, serta dapat meminimalkan distorsi terhadap distribusi data asli. Dengan mengisi nilai kosong menggunakan modus, proses ini membantu menjaga konsistensi data tanpa menghapus baris yang mungkin masih mengandung informasi penting lainnya.
+
+## **Mengecek dan Menangani Missing Values pada dataset Books**
+"""
+
+# Menampilkan ringkasan informasi dari dataset books, termasuk jumlah entri, tipe data, dan jumlah nilai non-null
+books.info()
+
+# Menghapus baris yang memiliki missing values di kolom 'Author'
+books.dropna(subset=['Author'], inplace=True)
+
+# Cek kembali apakah masih ada missing values di kolom 'Autho'
+print("Jumlah nilai kosong pada kolom Author setelah dihapus:", books['Author'].isnull().sum())
+
+# Menghapus baris yang memiliki missing values di kolom 'Publisher'
+books.dropna(subset=['Publisher'], inplace=True)
+
+# Cek kembali apakah masih ada missing values di kolom 'Publisher'
+print("Jumlah nilai kosong pada kolom Publisher setelah dihapus:", books['Publisher'].isnull().sum())
+
+# Menghapus kolom dari image URL S, image URL M, dan image URL L
+books.drop(['Image-URL-S', 'Image-URL-M', 'Image-URL-L'], axis=1, inplace=True, errors='ignore')
+
+# Mengecek kembali pada kolom books
+books.info()
+
+"""***Insight:***
+
+Untuk menangani missing values pada dataset Books, dilakukan dua pendekatan yang berbeda. Pada kolom `Author` dan `Publisher`, karena jumlah missing values sangat sedikit, maka baris yang mengandung nilai kosong dihapus agar tidak memengaruhi integritas data secara keseluruhan. Sementara itu, kolom `Image-URL-S`, `Image-URL-M`, dan `Image-URL-L` dihapus dari dataset karena informasi gambar tidak digunakan dalam sistem rekomendasi ini. Penghapusan kolom tersebut juga membantu menyederhanakan struktur data dan mempercepat proses pemrosesan.
+
+## **Mengecek apakah ada data duplikat dari masing-masing dataset**
+"""
+
+# Mengecek apakah ada baris duplikat pada dataset user
+user.duplicated().sum()
+
+# Mengecek apakah ada baris duplikat pada dataset rating
+rating.duplicated().sum()
+
+# Mengecek apakah ada baris duplikat pada dataset books
+books.duplicated().sum()
+
+"""***Insight:***
+
+Setelah dilakukan pengecekan terhadap ketiga dataset — Users, Ratings, dan Books — tidak ditemukan adanya baris duplikat. Hal ini menunjukkan bahwa setiap entri pada data bersifat unik dan tidak ada pengulangan informasi, sehingga tidak diperlukan proses penghapusan duplikat. Kondisi ini sangat mendukung kualitas data dan memperkuat keandalan analisis serta pemodelan sistem rekomendasi yang akan dibangun.
+
+## **Menggabungkan dataset rating dan books berdasarkan kolom ISBN**
+"""
+
+# Menggabungkan data rating dengan data buku berdasarkan ISBN
+data_merged = rating.merge(books, on='ISBN')
+
+# Menampilkan dimensi dari DataFrame hasil gabungan
+data_merged.shape
+
+# Menampilkan 2 baris pertama dari DataFrame 'data_merged'
+# Ini berguna untuk melihat seperti apa struktur dan isi data setelah proses merge.
+data_merged.head(2)
+
+"""***Insight:***
+
+Data rating dan buku berhasil digabungkan berdasarkan ISBN, menghasilkan lebih dari 1 juta baris data. Setiap interaksi pengguna kini dilengkapi informasi user_id, ISBN, rating, judul, penulis, tahun terbit, dan penerbit buku. Gabungan ini menjadi dasar penting untuk membangun sistem rekomendasi yang lebih akurat dan kontekstual.
+
+## **Mengelompokkan data rating berdasarkan user_id dan menggambil 20 pengguna dengan jumlah rating terbanyak**
 """
 
 # Mengelompokkan data rating berdasarkan User_id, lalu menghitung jumlah dan rata-rata rating yang diberikan oleh masing-masing pengguna
@@ -309,24 +373,7 @@ User_rating
 
 Dari analisis data rating, ditemukan 20 pengguna paling aktif dengan jumlah rating terbanyak. Informasi ini penting karena pengguna aktif berkontribusi besar dalam membentuk pola rekomendasi sistem. Rata-rata rating yang mereka berikan juga membantu memahami kecenderungan penilaian masing-masing pengguna, yang berguna untuk meningkatkan akurasi rekomendasi.
 
-**Menggabungkan dataset rating dan books berdasarkan kolom ISBN**
-"""
-
-# Menggabungkan data rating dengan data buku berdasarkan ISBN
-data_merged = rating.merge(books, on='ISBN')
-
-# Menampilkan dimensi dari DataFrame hasil gabungan
-data_merged.shape
-
-# Menampilkan 2 baris pertama dari DataFrame 'data_merged'
-# Ini berguna untuk melihat seperti apa struktur dan isi data setelah proses merge.
-data_merged.head(2)
-
-"""***Insight:***
-
-Data rating dan buku berhasil digabungkan berdasarkan ISBN, menghasilkan lebih dari 1 juta baris data. Setiap interaksi pengguna kini dilengkapi informasi user_id, ISBN, rating, judul, penulis, tahun terbit, dan penerbit buku. Gabungan ini menjadi dasar penting untuk membangun sistem rekomendasi yang lebih akurat dan kontekstual.
-
-**Mengelompokkan data berdasarkan judul buku dan mengurutkan dari jumlah rating terbanyak**
+## **Mengelompokkan data berdasarkan judul buku dan mengurutkan dari jumlah rating terbanyak**
 """
 
 # Mengelompokkan data berdasarkan judul buku ('Title') dan menghitung:
@@ -349,26 +396,6 @@ title_rating
 
 Dari hasil pengelompokan data berdasarkan judul buku, ditemukan 20 buku yang paling banyak mendapatkan rating dari pengguna. Buku-buku ini memiliki tingkat popularitas tinggi karena sering dinilai oleh banyak pengguna. Selain itu, informasi rata-rata rating pada masing-masing buku juga membantu mengukur seberapa baik buku tersebut diterima. Data ini sangat berguna untuk mengidentifikasi buku-buku populer dan berkualitas, yang dapat dijadikan prioritas dalam sistem rekomendasi.
 
-# **Data Preparation**
-
-Dalam proyek ini, tahap data preparation dilakukan untuk memastikan bahwa data yang digunakan dalam model rekomendasi berada dalam kondisi optimal. Tujuannya adalah merapikan dan menyesuaikan struktur data mentah agar dapat langsung digunakan oleh model collaborative filtering.
-
-Proses pembersihan data dilakukan melalui tiga tahap awal:
-- Mengecek dan Menangani Duplikat <br>
-Langkah pertama adalah mengidentifikasi dan menghapus data ganda yang berpotensi mengganggu hasil analisis dan akurasi model.
-- Mengecek dan Menangani Missing Values <br>
-Setelah data duplikat dibersihkan, proses dilanjutkan dengan mendeteksi nilai-nilai kosong atau hilang, lalu mengambil tindakan yang sesuai, seperti penghapusan atau imputasi, untuk menjaga integritas data.
-- Melakukan Sampling Dataset<br>
-Mengingat ukuran data yang besar, dilakukan sampling untuk mengambil sebagian data yang representatif agar proses pelatihan model lebih efisien dan cepat.
-
-Setelah tahapan pembersihan awal, dilanjutkan ke proses preprocessing untuk pendekatan collaborative filtering, yaitu:
-- Menyalin Data <br>
-Membuat salinan dataset yang akan diproses khusus untuk kebutuhan model, tanpa memengaruhi data asli.
-- Melakukan Encoding <br>
-Mengubah nilai-nilai seperti User_id dan ISBN menjadi format numerik agar dapat dibaca dan diproses oleh algoritma collaborative filtering.
-- Pembagian Data <br>
-Membagi dataset yang sudah diproses menjadi data training dan data testing dengan perbandingan 80:20. Data training digunakan untuk melatih model, sedangkan data testing dipakai untuk mengevaluasi performa model pada data yang belum pernah dilihat sebelumnya.
-
 ## **Mengecek apakah ada data duplikat dari dataset gabungan**
 
 Tahap ini menghapus data yang sama persis lebih dari satu kali. Duplikasi bisa membuat model belajar dari informasi berulang, sehingga menurunkan akurasi. Dengan menghilangkan duplikat, data jadi lebih bersih dan hasil analisis lebih akurat.
@@ -381,7 +408,7 @@ data_merged.duplicated().sum()
 
 Hasil pengecekan pada DataFrame `data_merged` menunjukkan bahwa tidak terdapat baris duplikat dalam data. Hal ini menandakan bahwa setiap interaksi pengguna terhadap buku bersifat unik, sehingga tidak diperlukan proses penghapusan duplikasi. Ini menjadi indikator positif karena kualitas data sudah cukup baik untuk langsung digunakan dalam tahap analisis atau pembangunan model rekomendasi.
 
-## **Mengecek dan Menangani Missing Values**
+## **Mengecek dan Menangani Missing Values Pada Dataset Gabungan**
 
 Tahap ini bertujuan memastikan data yang digunakan bebas dari nilai kosong atau hilang yang bisa menimbulkan kesalahan atau bias. Dengan menangani missing values, dataset menjadi lebih lengkap dan hasil analisis maupun model prediksi jadi lebih tepat dan dapat diandalkan.
 """
@@ -389,15 +416,9 @@ Tahap ini bertujuan memastikan data yang digunakan bebas dari nilai kosong atau 
 # Mengecek missing values
 data_merged.isna().sum()
 
-# Menghapus baris yang memiliki missing values pada kolom 'Author' dan 'Publisher'
-data_merged.dropna(subset=['Author', 'Publisher'], inplace=True)
-
-# Mengecek kembali untuk memastikan tidak ada missing values yang tersisa
-data_merged.isna().sum()
-
 """***Insight:***
 
-Dari hasil pemeriksaan, ditemukan adanya missing values sebanyak 2 entri pada kolom Author dan Publisher. Untuk menjaga konsistensi dan kualitas data, baris-baris tersebut dihapus. Setelah proses pembersihan dilakukan, pengecekan ulang memastikan bahwa seluruh kolom kini bebas dari nilai yang hilang, sehingga data siap digunakan untuk proses analisis dan pemodelan lebih lanjut.
+Hasil pemeriksaan menunjukkan bahwa dataset gabungan tidak mengandung missing values, sehingga tidak diperlukan proses imputasi atau penghapusan data pada tahap ini.
 
 ## **Melakukan Sampling Dataset**
 
@@ -506,7 +527,7 @@ history = model.fit(
 
 """***Insight:***
 
-Hasil pelatihan selama 8 epoch menunjukkan bahwa model mencapai performa validasi terbaik pada epoch pertama dengan RMSE validasi sebesar 0.3677. Setelah itu, performa mulai menurun secara bertahap, yang mengindikasikan adanya overfitting. Hal ini terlihat jelas pada epoch 6 dan 7, di mana nilai loss dan RMSE meningkat tajam, menunjukkan bahwa model tidak lagi belajar dengan optimal dari data. Di akhir pelatihan (epoch 8), performa validasi sedikit membaik, namun tetap belum melebihi performa awal.
+Hasil pelatihan selama 8 epoch menunjukkan bahwa model mencapai performa validasi terbaik pada epoch kelima dengan RMSE validasi sebesar 0.3640. Setelah itu, performa mulai menurun secara bertahap, yang mengindikasikan adanya overfitting. Hal ini terlihat jelas pada epoch 7 dan 8, di mana nilai loss dan RMSE meningkat tajam, menunjukkan bahwa model tidak lagi belajar dengan optimal dari data. Di akhir pelatihan (epoch 8), performa validasi tetap menurun. Namun, tidak mampu melebihi performa terbaik sebelumnya.
 
 # **Evaluasi Model**
 
@@ -526,7 +547,7 @@ plt.show()
 
 """***Insight:***
 
-Berdasarkan visualisasi metrik Model Performance, terlihat bahwa model mengalami overfitting mulai dari epoch ke-5, ditandai dengan penurunan RMSE train namun peningkatan RMSE validation. Hal ini menunjukkan bahwa model mulai terlalu spesifik mempelajari pola data latih dan kehilangan kemampuan generalisasi pada data baru. Epoch ke-4 menjadi titik optimal di mana performa model masih stabil dan seimbang antara data latih dan validasi.
+Hasil pelatihan selama 8 epoch menunjukkan bahwa model mencapai performa validasi terbaik pada epoch kelima dengan RMSE validasi sebesar 0.3640. Setelah itu, performa mulai menurun secara bertahap, yang mengindikasikan adanya overfitting. Hal ini terlihat jelas pada epoch 6 dan 7, di mana nilai loss dan RMSE meningkat tajam, menunjukkan bahwa model tidak lagi belajar dengan optimal dari data. Di akhir pelatihan (epoch 8), performa validasi sedikit membaik, namun tetap belum melebihi performa terbaik pada epoch kelima.
 
 ## **Mendapatkan Rekomendasi Buku**
 """
@@ -580,5 +601,11 @@ recommend_books_for_user(
 
 """***Insight:***
 
-Model berhasil memberikan rekomendasi buku yang tampaknya sangat relevan dengan minat pengguna. Hal ini terlihat dari dominasi seri Harry Potter, yang muncul sebanyak lima judul berbeda, menunjukkan bahwa pengguna kemungkinan memiliki preferensi kuat terhadap genre fantasi atau fiksi populer. Selain itu, buku-buku lain yang direkomendasikan seperti The Great Gatsby, The Secret Life of Bees, dan Anne Frank: The Diary of a Young Girl menunjukkan kecenderungan terhadap bacaan klasik dan novel dengan nilai historis atau emosional yang kuat. Rekomendasi ini mengindikasikan bahwa model Collaborative Filtering mampu menangkap pola preferensi pengguna melalui kesamaan rating dengan pengguna lain yang memiliki ketertarikan serupa. Secara keseluruhan, hasil rekomendasi sudah cukup personal dan relevan dengan karakteristik pengguna.
+Model berhasil memberikan rekomendasi buku yang menunjukkan relevansi tinggi dengan preferensi pengguna. Hal ini tercermin dari dominasi seri Harry Potter, yang muncul sebanyak empat judul berbeda, yaitu The Chamber of Secrets, The Goblet of Fire, The Sorcerer's Stone, dan The Prisoner of Azkaban. Ini mengindikasikan bahwa pengguna kemungkinan besar memiliki ketertarikan kuat terhadap genre fantasi remaja dan fiksi populer.
+
+Selain itu, rekomendasi lain seperti The Hobbit, Coraline, dan The Da Vinci Code juga memperkuat indikasi minat terhadap cerita yang memuat unsur petualangan, misteri, dan dunia imajinatif. Kehadiran buku seperti The Lovely Bones dan Sam's Letters to Jennifer menambahkan dimensi emosional dan drama, menunjukkan bahwa pengguna juga mungkin menyukai bacaan dengan nuansa psikologis atau sentimental.
+
+Secara keseluruhan, hasil rekomendasi ini menunjukkan bahwa model Collaborative Filtering bekerja cukup baik dalam mengenali pola preferensi pengguna berdasarkan kemiripan perilaku dengan pengguna lain, serta mampu menghasilkan saran buku yang relevan dan beragam secara genre.
+
+
 """
