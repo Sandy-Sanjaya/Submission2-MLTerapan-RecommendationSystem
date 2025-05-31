@@ -59,19 +59,23 @@ Melalui pendekatan ini, sistem rekomendasi yang dibangun diharapkan mampu member
 
 ## Data Understanding
 
-Data Understanding merupakan tahap awal yang krusial dalam pengembangan proyek machine learning maupun data science. Tahap ini bertujuan untuk memahami isi, struktur, serta kualitas data yang akan dianalisis. Pada proyek ini, proses Data Understanding dilakukan melalui beberapa tahapan, yaitu:
+Data Understanding merupakan tahap awal yang krusial dalam pengembangan proyek *Machine Learning* maupun *Data Science*. Tahap ini bertujuan untuk memahami isi, struktur, serta kualitas data yang akan dianalisis agar proses analisis selanjutnya dapat berjalan secara optimal.
 
-1. Melakukan **load dataset** dan **mengubah nama kolom** agar lebih konsisten dan mudah dianalisis.
-2. Melakukan **univariate exploratory data analysis** terhadap masing-masing dataset.
-3. Melakukan **visualisasi data** untuk melihat distribusi dan pola data.
-4. Mengelompokkan data berdasarkan **user yang memberikan rating terbanyak**.
-5. Melakukan proses **penggabungan dataset**.
-6. Mengelompokkan data berdasarkan **judul buku dengan jumlah rating terbanyak**.
+Pada proyek ini, proses *Data Understanding* dilakukan melalui tiga tahapan utama berikut:
 
-Dataset ini diambil dari [Book Recommendation Dataset](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset), yang merupakan salah satu dataset rekomendasi buku terkenal. Dataset ini terdiri atas tiga file utama, yaitu:
-- `Users.csv`
-- `Ratings.csv`
-- `Books.csv`
+1. **Memuat dan memeriksa struktur dataset**  
+2. **Melakukan *Univariate Exploratory Data Analysis***  
+3. **Melakukan visualisasi data untuk memahami pola dan distribusi**
+
+### Sumber Dataset
+
+Dataset yang digunakan dalam proyek ini bersumber dari [Book Recommendation Dataset](https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset) yang tersedia di Kaggle. Dataset ini merupakan kumpulan data populer yang sering digunakan untuk membangun sistem rekomendasi buku. Dataset terdiri atas tiga file utama:
+
+| Nama File     | Deskripsi                                                              | Jumlah Baris | Jumlah Kolom |
+|---------------|-------------------------------------------------------------------------|--------------|---------------|
+| `Users.csv`   | Berisi informasi pengguna seperti ID, lokasi, dan usia                 | 278,858      | 3             |
+| `Ratings.csv` | Berisi rating buku dari masing-masing pengguna                         | 1,149,780    | 3             |
+| `Books.csv`   | Berisi detail buku seperti ISBN, judul, penulis, dan penerbit          | 271,360      | 8             |
 
 ---
 
@@ -117,19 +121,6 @@ Dataset ini mencakup detail informasi buku yang ada di sistem.
 ---
 
 ### Eksploratory Data Analysis (EDA)
-
-#### Data Quality & Preprocessing
-
-- **Users**:
-  - Missing values ditemukan pada `Age`.
-  - Diisi dengan **modus** (nilai terbanyak).
-- **Books**:
-  - 2 nilai kosong pada `Year` → baris dihapus.
-  - 3 nilai kosong pada kolom gambar → kolom `Image-URL` dihapus seluruhnya.
-- **Ratings**:
-  - Tidak ada missing values.
-- **Duplikasi**: Tidak ditemukan pada ketiga dataset.
-
 Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah beberapa visualisasi yang dilakukan:
 #### 1. Top Contributors in Book Dataset
 ![Top Contributors in Book Dataset](visualisasi/Gambar1.png)
@@ -170,9 +161,42 @@ Untuk memperkuat pemahaman terhadap karakteristik dataset, berikut adalah bebera
   - Eropa: Madrid (Spanyol), Berlin (Jerman), Milano (Italia).
 - Ini menunjukkan dominasi pengguna dari Amerika Utara, Eropa Barat, dan Australia — penting untuk mempertimbangkan keragaman budaya dalam sistem rekomendasi.
 
----
+## Data Preparation
 
-### Mengelompokkan Data Rating Berdasarkan `user_id` dan Mengambil 20 Pengguna dengan Jumlah Rating Terbanyak
+Tahap *Data Preparation* bertujuan untuk memastikan bahwa data yang digunakan dalam model sistem rekomendasi berada dalam kondisi optimal. Proses ini mencakup pembersihan data, penggabungan data, seleksi subset data, hingga transformasi data untuk kebutuhan algoritma *Collaborative Filtering*.
+
+### Pembersihan Data
+
+Beberapa langkah pembersihan data yang dilakukan dalam proyek ini meliputi:
+
+#### 1. Menangani Missing Values
+
+- **Kolom `Age` pada dataset `Users`**  
+  Nilai kosong diisi menggunakan **modus (nilai yang paling sering muncul)**. Pendekatan ini dipilih karena dianggap dapat mewakili mayoritas usia pengguna dan meminimalkan distorsi terhadap distribusi data.
+
+- **Kolom `Author` dan `Publisher` pada dataset `Books`**  
+  Karena jumlah missing values sangat sedikit, maka baris yang mengandung nilai kosong pada kolom ini dihapus untuk menjaga integritas data.
+
+- **Kolom `Image-URL-S`, `Image-URL-M`, dan `Image-URL-L`**  
+  Kolom-kolom ini dihapus karena informasi gambar tidak digunakan dalam sistem rekomendasi. Penghapusan dilakukan untuk menyederhanakan struktur data dan mempercepat proses pemrosesan.
+
+#### 2. Mengecek dan Menangani Duplikasi
+
+Setelah dilakukan pengecekan terhadap ketiga dataset (`Users`, `Ratings`, dan `Books`), tidak ditemukan baris duplikat. Hal ini menunjukkan bahwa setiap entri bersifat unik dan tidak ada pengulangan informasi, sehingga tidak diperlukan proses penghapusan duplikasi.
+
+#### 3. Data Merging 
+
+- Dataset **Ratings** digabungkan dengan **Books** berdasarkan `ISBN`, menghasilkan lebih dari **1 juta baris data**.
+- Setiap interaksi kini dilengkapi:
+  - UserId
+  - ISBN
+  - Rating
+  - Judul buku
+  - Penulis
+  - Tahun terbit
+  - Penerbit
+
+#### 4. Mengelompokkan Data Rating Berdasarkan `user_id` dan Mengambil 20 Pengguna dengan Jumlah Rating Terbanyak
 
 Dari analisis data rating, ditemukan 20 pengguna paling aktif dengan jumlah rating terbanyak. Informasi ini penting karena pengguna aktif berkontribusi besar dalam membentuk pola rekomendasi sistem. Rata-rata rating yang mereka berikan juga membantu memahami kecenderungan penilaian masing-masing pengguna, yang berguna untuk meningkatkan akurasi rekomendasi.
 
@@ -201,22 +225,7 @@ Berikut adalah 20 pengguna teratas berdasarkan jumlah rating terbanyak:
 | 19  | 69817   | 2448   | 1.524918 |
 | 20  | 64531   | 2421   | 3.147047 |
 
----
-
-### Data Merging 
-
-- Dataset **Ratings** digabungkan dengan **Books** berdasarkan `ISBN`, menghasilkan lebih dari **1 juta baris data**.
-- Setiap interaksi kini dilengkapi:
-  - UserId
-  - ISBN
-  - Rating
-  - Judul buku
-  - Penulis
-  - Tahun terbit
-  - Penerbit
-
- ---
-### Mengelompokkan Data Berdasarkan Judul Buku dan Mengurutkan dari Jumlah Rating Terbanyak
+#### 5. Mengelompokkan Data Berdasarkan Judul Buku dan Mengurutkan dari Jumlah Rating Terbanyak
 
 Dari hasil pengelompokan data berdasarkan judul buku, ditemukan 20 buku yang paling banyak mendapatkan rating dari pengguna. Buku-buku ini memiliki tingkat popularitas tinggi karena sering dinilai oleh banyak pengguna. Selain itu, informasi rata-rata rating pada masing-masing buku juga membantu mengukur seberapa baik buku tersebut diterima. Data ini sangat berguna untuk mengidentifikasi buku-buku populer dan berkualitas, yang dapat dijadikan prioritas dalam sistem rekomendasi.
 
@@ -245,29 +254,23 @@ Berikut adalah 20 judul buku teratas berdasarkan jumlah rating terbanyak:
 | 19  | Harry Potter and the Sorcerer's Stone             | 575   | 4.896562 |
 | 20  | Summer Sisters                                     | 573   | 3.612457 |
 
-## Data Preparation
+#### 6. Mengecek dan Menangani Duplikat pada Dataset Gabungan
+Selanjutnya dilakukan pemeriksaan terhadap dataset gabungan untuk mengetahui keberadaan data duplikat. Berdasarkan hasil analisis, **tidak ditemukan duplikasi**, sehingga tidak diperlukan penghapusan data pada tahap ini.
 
-Tahap **data preparation** merupakan proses penting sebelum membangun model machine learning, terutama dalam sistem rekomendasi berbasis data pengguna. Tujuan utama dari tahap ini adalah memastikan bahwa data berada dalam format yang sesuai dan bersih, serta siap digunakan oleh model **Neural Collaborative Filtering (NCF)**. Dalam proyek ini, proses data preparation dilakukan dalam dua tahapan besar: **pembersihan data** dan **preprocessing untuk collaborative filtering**.
+#### 7. Mengecek dan Menangani Missing Values pada Dataset Gabungan 
+Hasil pemeriksaan menunjukkan bahwa dataset gabungan tidak mengandung missing values, sehingga tidak diperlukan proses imputasi atau penghapusan data pada tahap ini.
 
-### 1. Pembersihan Data
-
-#### a. Mengecek dan Menangani Duplikat  
-Pertama, dilakukan pemeriksaan terhadap dataset gabungan untuk mengetahui keberadaan data duplikat. Berdasarkan hasil analisis, **tidak ditemukan duplikasi**, sehingga tidak diperlukan penghapusan data pada tahap ini.
-
-#### b. Mengecek dan Menangani Missing Values  
-Beberapa nilai kosong ditemukan dalam kolom `Author` dan `Publisher` pada dataset gabungan, masing-masing sebanyak **2 entri**. Untuk menjaga kualitas dan integritas data, baris-baris tersebut dihapus dari dataset.
-
-#### c. Sampling Dataset  
+#### 8. Sampling Dataset  
 Dataset gabungan memiliki lebih dari satu juta entri yang berpotensi memperlambat proses training. Oleh karena itu, dilakukan sampling sebanyak **500.000 data interaksi** dari gabungan dataset untuk menciptakan *dataframe* `data_small`. Sampling ini bertujuan untuk mempercepat eksplorasi dan pelatihan model tanpa kehilangan representativitas data.
 
 ---
 
-### 2. Preprocessing untuk Collaborative Filtering
+### Preprocessing untuk Collaborative Filtering
 
-#### a. Menyalin Data  
+#### 1. Menyalin Data  
 Untuk menjaga keutuhan data asli, data hasil sampling disalin menjadi variabel baru yang digunakan khusus untuk proses training dan evaluasi model.
 
-#### b. Encoding  
+#### 2. Encoding  
 Model collaborative filtering, khususnya berbasis neural network, membutuhkan input dalam bentuk numerik. Oleh karena itu, kolom `User_id` dan `ISBN` di-*encode* menjadi integer menggunakan `LabelEncoder`.  
 Hasil encoding menunjukkan terdapat:
 - **61.584 pengguna unik**
@@ -275,7 +278,7 @@ Hasil encoding menunjukkan terdapat:
 
 Hal ini menunjukkan cakupan dan keragaman interaksi yang cukup tinggi dalam dataset.
 
-#### c. Pembagian Data  
+#### 3. Pembagian Data  
 Setelah proses encoding, dataset dibagi menjadi dua bagian:
 - **80% data training**
 - **20% data testing**
@@ -308,24 +311,22 @@ Model dibangun menggunakan TensorFlow dengan pendekatan **Neural Collaborative F
 Model dilatih selama **8 epoch**, dengan metrik evaluasi utama yaitu **Root Mean Squared Error (RMSE)** pada data training dan validation.
 
 #### Insight Model:
-- Performa **terbaik** dicapai pada **epoch ke-1**, dengan **RMSE validasi sebesar 0.3677**.
-- Setelah itu, terjadi penurunan performa secara bertahap, dan **overfitting mulai terlihat pada epoch ke-6 dan ke-7**, di mana nilai RMSE meningkat signifikan.
-- Pada **epoch ke-8**, performa validasi sedikit membaik, namun tidak melebihi performa awal.
+Hasil pelatihan selama 8 epoch menunjukkan bahwa model mencapai performa validasi terbaik pada epoch kelima dengan RMSE validasi sebesar 0.3640. Setelah itu, performa mulai menurun secara bertahap, yang mengindikasikan adanya overfitting. Hal ini terlihat jelas pada epoch 7 dan 8, di mana nilai loss dan RMSE meningkat tajam, menunjukkan bahwa model tidak lagi belajar dengan optimal dari data. Di akhir pelatihan (epoch 8), performa validasi tetap menurun. Namun, tidak mampu melebihi performa terbaik sebelumnya.
 
 ### Output: Top 10 Book Recommendation
 
 Model berhasil memberikan **top-10 rekomendasi buku** untuk pengguna tertentu. Berikut adalah contoh hasil rekomendasi:
 
-1. **Harry Potter and the Sorcerer's Stone**
-2. **Harry Potter and the Chamber of Secrets**
-3. **Harry Potter and the Prisoner of Azkaban**
-4. **Harry Potter and the Goblet of Fire**
-5. **Harry Potter and the Order of the Phoenix**
-6. **The Great Gatsby**
-7. **The Secret Life of Bees**
-8. **Anne Frank: The Diary of a Young Girl**
-9. **Angels & Demons**
-10. **The Lovely Bones: A Novel**
+- Harry Potter and the Chamber of Secrets (Book 2)
+- Harry Potter and the Goblet of Fire (Book 4)
+- Harry Potter and the Sorcerer's Stone (Book 1)
+- The Lovely Bones: A Novel
+- Free
+- The Hobbit : The Enchanting Prelude to The Lord of the Rings
+- Harry Potter and the Prisoner of Azkaban (Book 3)
+- Coraline
+- The Da Vinci Code
+- Sam's Letters to Jennifer
 
 Rekomendasi ini menunjukkan bahwa model berhasil menangkap preferensi pengguna terhadap genre **fantasi populer**, **novel klasik**, dan **kisah bernuansa emosional** atau **historis**. Dominasi buku dari seri *Harry Potter* juga mengindikasikan bahwa sistem mengenali konsistensi minat pengguna terhadap suatu franchise atau penulis.
 
@@ -355,15 +356,13 @@ Model dievaluasi menggunakan data validasi selama proses pelatihan sebanyak 8 ep
 ![hasil evaluasi](visualisasi/Gambar4.png)
 
 **Insight dari Grafik:**
-- Model menunjukkan performa **terbaik pada epoch ke-1** dengan **RMSE validasi sebesar 0.3677**.
-- Mulai epoch ke-5, terlihat adanya **overfitting**, ditandai dengan meningkatnya RMSE pada data validasi meskipun RMSE training terus menurun.
-- **Epoch ke-4** merupakan titik **kompromi terbaik** antara generalisasi dan kompleksitas model, karena pada titik ini performa masih relatif stabil di kedua data.
+Hasil pelatihan selama 8 epoch menunjukkan bahwa model mencapai performa validasi terbaik pada epoch kelima dengan RMSE validasi sebesar 0.3640. Setelah itu, performa mulai menurun secara bertahap, yang mengindikasikan adanya overfitting. Hal ini terlihat jelas pada epoch 6 dan 7, di mana nilai loss dan RMSE meningkat tajam, menunjukkan bahwa model tidak lagi belajar dengan optimal dari data. Di akhir pelatihan (epoch 8), performa validasi sedikit membaik, namun tetap belum melebihi performa terbaik pada epoch kelima.
 
 
 ## Kesimpulan Evaluasi (Berbasis Metrik)
 
 - Model menggunakan **metrik RMSE** dan tren performa model selama proses training dan validasi.
-- Model **Neural Collaborative Filtering (NCF)** menghasilkan performa validasi terbaik pada epoch pertama dengan **RMSE = 0.3677**, sebelum mengalami overfitting pada epoch-epoch berikutnya.
+- Model **Neural Collaborative Filtering (NCF)** menghasilkan performa validasi terbaik pada epoch kelima dengan **RMSE = 0.3640**, sebelum mengalami overfitting pada epoch-epoch berikutnya.
 - Hasil evaluasi menunjukkan bahwa untuk data interaksi pengguna-buku dengan skala besar dan kompleksitas tinggi, pendekatan **deep learning berbasis collaborative filtering** mampu mempelajari pola tersembunyi preferensi pengguna secara efektif.
 
 ---
